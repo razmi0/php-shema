@@ -33,7 +33,7 @@ require_once 'ValidatorResult.php';
  */
 class StringValidator implements ValidatorInterface
 {
-    public function validate($value, $key): ValidatorResult
+    public function validate(mixed $value, string  $key): ValidatorResult
     {
         $currentType = gettype($value);
         return !is_string($value)
@@ -53,7 +53,7 @@ class StringValidator implements ValidatorInterface
  */
 class DoubleValidator implements ValidatorInterface
 {
-    public function validate($value, $key)
+    public function validate(mixed $value, string  $key): ValidatorResult
     {
         $currentType = gettype($value);
         return !is_double($value)
@@ -72,7 +72,7 @@ class DoubleValidator implements ValidatorInterface
  */
 class IntegerValidator implements ValidatorInterface
 {
-    public function validate($value, $key)
+    public function validate(mixed $value, string  $key): ValidatorResult
     {
         $currentType = gettype($value);
         return !is_int($value)
@@ -91,7 +91,7 @@ class IntegerValidator implements ValidatorInterface
  */
 class ArrayValidator implements ValidatorInterface
 {
-    public function validate($value, $key)
+    public function validate(mixed $value, string  $key): ValidatorResult
     {
         $currentType = gettype($value);
         return !is_array($value)
@@ -111,7 +111,7 @@ class ArrayValidator implements ValidatorInterface
 class isNullValidator implements ValidatorInterface
 {
 
-    public function validate($value, $key)
+    public function validate(mixed $value, string  $key): ValidatorResult
     {
         $currentType = gettype($value);
         return !is_null($value)

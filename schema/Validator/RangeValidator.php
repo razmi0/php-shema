@@ -178,7 +178,7 @@ class IntegerRangeValidator extends RangeValidator implements ValidatorInterface
      * 
      * 
      */
-    public function validate(mixed $value, string $key)
+    public function validate(mixed $value, string $key): ValidatorResult
     {
         if ($this->hasRange()) {
             $condition = $value < $this->min || $value > $this->max;
@@ -221,7 +221,7 @@ class ArrayRangeValidator extends RangeValidator implements ValidatorInterface
      * 
      * 
      */
-    public function validate($value, $key)
+    public function validate(mixed $value, string $key): ValidatorResult
     {
         $count = count($value);
 
@@ -265,7 +265,7 @@ class StringRangeValidator extends RangeValidator implements ValidatorInterface
      * 
      * 
      */
-    public function validate($value, $key)
+    public function validate(mixed $value, string $key): ValidatorResult
     {
         $size = strlen($value);
 
