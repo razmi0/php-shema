@@ -301,7 +301,6 @@ class Schema extends SchemaCore
                     $this->validationMap[$key][] = $this->processTypeRules($constraintValue);
                 }
 
-
                 // Complex rules
                 // -- 
                 else if ($this->isComplex($constraint)) {
