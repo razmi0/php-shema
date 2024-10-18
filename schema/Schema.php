@@ -1,26 +1,5 @@
 <?php
 
-require_once 'Validator/ValidatorError.php';
-require_once 'Core.php';
-
-use Schema\Template\Template as Template;
-use Schema\Core as Core;
-use Schema\Validator\ValidatorError as ValidatorError;
-use Schema\Validator\ValidatorResult as ValidatorResult;
-
-
-/**
- * 
- * An exception can be thrown :
- *     - if the schema is not set before processing.
- *     - if the schema is already parsed and the consumer tries to parse it again.
- *     - if the class consumer use the parse() method and the client data has at least one error.
- *       (note : the class consumer can use safeParse() method to avoid the exception).
- * 
- */
-
-use Exception as Exception;
-
 /**
  * 
  * 
@@ -56,13 +35,33 @@ use Exception as Exception;
  * 
  **/
 
+require_once 'Validator/ValidatorError.php';
+require_once 'Core.php';
+
+use Schema\Template\Template as Template;
+use Schema\Core as Core;
+use Schema\Validator\ValidatorError as ValidatorError;
+use Schema\Validator\ValidatorResult as ValidatorResult;
+
+
+/**
+ * 
+ * An exception can be thrown :
+ *     - if the schema is not set before processing.
+ *     - if the schema is already parsed and the consumer tries to parse it again.
+ *     - if the class consumer use the parse() method and the client data has at least one error.
+ *       (note : the class consumer can use safeParse() method to avoid the exception).
+ * 
+ */
+
+use Exception as Exception;
 
 
 /**
  * 
  * Class Schema
  * 
- * A schema is a set of rules that the client data must follow.
+ * A schema is a set of rules that the client data must follow. Provided with a valid Template, the Schema class can parse the client data and validate it against the rules explicitly defined in the schema by the consumer.
  * 
  * @author Cuesta Thomas
  * @version 1.0
@@ -187,9 +186,14 @@ class Schema
     private bool $hasError = false;
     /**
      * 
+     * 
+     * 
      * The constructor cast the template to a schema.
      * A schema is nothing else than a valid template.
      * @param Template $template
+     * 
+     * 
+     * 
      * 
      */
     public function __construct(Template $template)
@@ -207,6 +211,8 @@ class Schema
      * Use it to reset the validation process and start over with the same schema.
      * Throw an exception if the schema is not set.
      * @throw Exception
+     * 
+     * 
      * 
      * 
      */
@@ -265,9 +271,15 @@ class Schema
     /**
      * 
      * 
+     * 
+     * 
      * Builds the validation map from the schema.
      * Insert corrensponding rules for each key in the schema calling the Core class.
      * @todo Extract this method to Core ?
+     * 
+     * 
+     * 
+     * 
      * 
      */
     private function processSchema(): void
