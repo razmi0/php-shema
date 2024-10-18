@@ -152,17 +152,33 @@ class RangeValidator
     }
 }
 
-
+/**
+ * 
+ * 
+ * class IntegerRangeValidator
+ * 
+ * 
+ * A class that represents the integer range validation logic.
+ * 
+ * 
+ */
 class IntegerRangeValidator extends RangeValidator implements ValidatorInterface
 {
 
-    public function __construct($range)
+    public function __construct(array $range)
     {
         parent::__construct($range);
     }
 
 
-    public function validate($value, $key)
+    /**
+     * 
+     * 
+     * An integer is in range if it is greater than or equal to the minimum value and less than or equal to the maximum value.
+     * 
+     * 
+     */
+    public function validate(mixed $value, string $key)
     {
         if ($this->hasRange()) {
             $condition = $value < $this->min || $value > $this->max;
@@ -179,6 +195,16 @@ class IntegerRangeValidator extends RangeValidator implements ValidatorInterface
     }
 }
 
+/**
+ * 
+ * 
+ * class ArrayRangeValidator
+ * 
+ * 
+ * A class that represents the array range validation logic.
+ * 
+ * 
+ */
 class ArrayRangeValidator extends RangeValidator implements ValidatorInterface
 {
 
@@ -187,6 +213,14 @@ class ArrayRangeValidator extends RangeValidator implements ValidatorInterface
         parent::__construct($range);
     }
 
+    /**
+     * 
+     * 
+     * An array is in range if it has a number of elements greater than or equal to the minimum value and less than or equal to the maximum value.
+     * 
+     * 
+     * 
+     */
     public function validate($value, $key)
     {
         $count = count($value);
@@ -206,6 +240,16 @@ class ArrayRangeValidator extends RangeValidator implements ValidatorInterface
     }
 }
 
+/**
+ * 
+ * 
+ * class StringRangeValidator
+ * 
+ * 
+ * A class that represents the string range validation logic.
+ * 
+ * 
+ */
 class StringRangeValidator extends RangeValidator implements ValidatorInterface
 {
 
@@ -214,6 +258,13 @@ class StringRangeValidator extends RangeValidator implements ValidatorInterface
         parent::__construct($range);
     }
 
+    /**
+     * 
+     * 
+     * A string is in range if it has a number of characters greater than or equal to the minimum value and less than or equal to the maximum value.
+     * 
+     * 
+     */
     public function validate($value, $key)
     {
         $size = strlen($value);
