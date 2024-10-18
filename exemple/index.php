@@ -8,7 +8,7 @@ use Schema\Template\Template as Template;
 
 $client_json = json_encode([
     "id" => 1,
-    "name" => "Product",
+    "name" => "Product 1",
     "description" => "This is a product",
     "price" => 100.15,
     "quantity" => "10",
@@ -20,7 +20,7 @@ $client_json = json_encode([
 
 $productTemplate = Template::fromArray([
     "id" => ["type" => "null"],
-    "name" => ["type" => "string", "range" => [0, 65]],
+    "name" => ["type" => "string", "range" => [0, 65], "regex" => "/^[a-zA-Z]+$/"],
     "description" => ["type" => "string", "range" => [10, 65000]],
     "price" => ["type" => "double", "range" => [0.01, null]],
     "quantity" => ["type" => "integer", "range" => [0, 1000]],
