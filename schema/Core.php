@@ -1,5 +1,20 @@
 <?php
 
+/**
+ * 
+ * 
+ *  _______________________________________________________________________
+ * |                                                                       |
+ * |        This class contain the core logic for building the             |
+ * |        validation map. Only static methods in it for better           |
+ * |        maintenability and scalability. His statics methods            |
+ * |        return the rule Object.                                        |
+ * |_______________________________________________________________________|
+ * 
+ * 
+ * 
+ **/
+
 namespace Schema;
 
 require_once 'Validator/TypeValidator.php';
@@ -20,6 +35,24 @@ use Schema\Validator\{
     ValidatorInterface
 };
 
+/**
+ * 
+ * 
+ * 
+ * 
+ * Class Core
+ * 
+ * @package Schema
+ * @author Cuesta Thomas
+ * @version 1.0
+ * 
+ * 
+ * 
+ * @todo Move rules to an ValidatorInterface[] to avoid switch case and better scalability when adding rules ?
+ * 
+ * 
+ * 
+ */
 class Core
 {
     /**
