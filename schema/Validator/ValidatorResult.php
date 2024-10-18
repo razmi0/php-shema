@@ -1,5 +1,8 @@
 <?php
 
+
+namespace Schema\Validator;
+
 /**
  * Class ValidatorResult
  * 
@@ -28,7 +31,7 @@ class ValidatorResult
         $this->message = $message;
     }
 
-    public function __invoke()
+    public function getReadable()
     {
         return [
             "code" => $this->code,

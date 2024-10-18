@@ -1,6 +1,10 @@
 <?php
 
 
+namespace Schema\Validator;
+
+use Exception;
+
 class ValidatorError extends Exception
 {
     private $data;

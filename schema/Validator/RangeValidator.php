@@ -1,8 +1,13 @@
-
 <?php
+
+namespace Schema\Validator;
 
 require_once 'ValidatorInterface.php';
 require_once 'ValidatorResult.php';
+
+use Schema\Validator\ValidatorResult as ValidatorResult;
+use Schema\Validator\ValidatorInterface as ValidatorInterface;
+
 
 class RangeValidator
 {
