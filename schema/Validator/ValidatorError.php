@@ -5,6 +5,13 @@ namespace Schema\Validator;
 
 use Exception;
 
+/**
+ * 
+ * Class ValidatorError
+ * 
+ * Extends the Exception class to provide a custom error message coming from the Validator result object and a getter to access the error result object.
+ * 
+ */
 class ValidatorError extends Exception
 {
     private $data;
