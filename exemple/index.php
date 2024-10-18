@@ -1,7 +1,7 @@
 <?php
 
-require_once 'schema/Schema.php';
-require_once 'schema/Template.php';
+require_once '../schema/Schema.php';
+require_once '../schema/Template.php';
 require_once 'Page.php';
 
 use Schema\Template\Template as Template;
@@ -35,4 +35,5 @@ $successResult = $schema->getSuccessResults();
 $isParsed = $schema->getIsParsed();
 $hasError = $schema->getHasError();
 
+new Page();
 Page::write($results);
