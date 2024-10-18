@@ -1,5 +1,19 @@
 <?php
 
+/**
+ * 
+ *  _______________________________________________________________________
+ * |                                                                       |
+ * |        This file contain all ranges rules validator. Each validator   |
+ * |        extends from RangeValidator and inherit the range analysis     |
+ * |        logic. They implements the ValidatorInterface with the         |
+ * |        validator method.                                              |
+ * |_______________________________________________________________________|
+ * 
+ * 
+ * 
+ **/
+
 namespace Schema\Validator;
 
 require_once 'ValidatorInterface.php';
@@ -9,20 +23,63 @@ use Schema\Validator\ValidatorResult as ValidatorResult;
 use Schema\Validator\ValidatorInterface as ValidatorInterface;
 
 
+/**
+ * 
+ * 
+ * class RangeValidator
+ * 
+ * A class that represents the range validation logic.
+ * 
+ * 
+ */
 class RangeValidator
 {
-    protected $min = null;
-    protected $max = null;
-    protected $hasMin = false;
-    protected $hasMax = false;
+    /**
+     * 
+     * 
+     * The minimum value of the range.
+     * 
+     * 
+     */
+    protected int | null $min = null;
+    /**
+     * 
+     * 
+     * The maximum value of the range.
+     * 
+     * 
+     */
+    protected int | null $max = null;
 
-    protected function __construct($range)
+    /**
+     * 
+     * 
+     * A flag that indicates if the range has a minimum value.
+     * 
+     * 
+     */
+    protected bool $hasMin = false;
+
+    /**
+     * 
+     * 
+     * A flag that indicates if the range has a maximum value.
+     * 
+     * 
+     */
+    protected bool $hasMax = false;
+
+    protected function __construct(array $range)
     {
         $this->min = $range[0];
         $this->max = $range[1];
         $this->hasMin = isset($range[0]);
         $this->hasMax = isset($range[1]);
     }
+
+
+    // Methods to check the range type so childs validator apply the correct logic
+    // --
 
     protected function hasRange()
     {
@@ -44,22 +101,52 @@ class RangeValidator
         return !$this->hasMin && !$this->hasMax;
     }
 
-    private function outOfRangeResult($value, $key)
+    /**
+     * 
+     * 
+     * Out of range result object configuration.
+     * 
+     * 
+     */
+    private function outOfRangeResult(mixed $value, string $key): ValidatorResult
     {
         return new ValidatorResult("out_of_range", "between " . (($this->min ?? "-infinite") . " and " . ($this->max ?? "+infinite")), $value, [$key], "Value is out of range");
     }
 
-    private function withinRangeResult($value, $key)
+    /**
+     * 
+     * 
+     * Within range result object configuration.
+     * 
+     * 
+     * 
+     */
+    private function withinRangeResult(mixed $value, string $key): ValidatorResult
     {
         return new ValidatorResult("valid", "between " . (($this->min ?? "-infinite") . " and " . ($this->max ?? "+infinite")), $value, [$key], "Value is within range");
     }
 
-    protected function noRangeResult($value, $key)
+    /**
+     * 
+     * 
+     * No range result object configuration.
+     * 
+     * 
+     * 
+     */
+    protected function noRangeResult(mixed $value, string $key): ValidatorResult
     {
         return new ValidatorResult("valid", "no_range", $value, [$key], "No range specified");
     }
 
-    protected function evaluateRange($value, $key, bool $condition)
+    /**
+     * 
+     * 
+     * Evaluate the range and return the correct result object.
+     * 
+     * 
+     */
+    protected function evaluateRange(mixed $value, string $key, bool $condition): ValidatorResult
     {
         return $condition ? $this->outOfRangeResult($value, $key) : $this->withinRangeResult($value, $key);
     }
