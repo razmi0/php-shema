@@ -23,7 +23,7 @@
  **/
 
 
-namespace Schema\Template;
+namespace Schema;
 
 use InvalidArgumentException;
 

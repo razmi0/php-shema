@@ -4,7 +4,7 @@ require_once '../schema/Schema.php';
 require_once '../schema/Template.php';
 require_once 'Page.php';
 
-use Schema\Template\Template as Template;
+use Schema\Template as Template;
 
 $client_json = json_encode([
     "id" => 1,

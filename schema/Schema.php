@@ -38,7 +38,7 @@
 require_once 'Validator/ValidatorError.php';
 require_once 'Core.php';
 
-use Schema\Template\Template as Template;
+use Schema\Template as Template;
 use Schema\Core as SchemaCore;
 use Schema\Validator\ValidatorError as ValidatorError;
 use Schema\Validator\ValidatorResult as ValidatorResult;
