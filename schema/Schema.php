@@ -63,6 +63,7 @@ use Exception as Exception;
  * 
  * A schema is a set of rules that the client data must follow. Provided with a valid Template, the Schema class can parse the client data and validate it against the rules explicitly defined in the schema by the consumer.
  * 
+ * @package Schema
  * @author Cuesta Thomas
  * @version 1.0
  * 
