@@ -134,7 +134,6 @@ class Schema
      * Stores all the rules for each key in the schema.
      * Internally managed.
      * The client data will be validated against these rules.
-     * @access private
      * 
      * 
      */
@@ -158,7 +157,6 @@ class Schema
      * Indicates whether the schema has been processed and the validation map has been built.
      * Avoid processing the schema multiple times.
      * Internally managed.
-     * @access private
      * 
      * 
      */

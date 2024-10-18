@@ -42,6 +42,8 @@ use Schema\Validator\{
  * 
  * Class Core
  * 
+ * Schema core logic for building the validation map.
+ * 
  * @package Schema
  * @author Cuesta Thomas
  * @version 1.0
@@ -59,7 +61,7 @@ class Core
      * 
      * 
      * Type rules are processed here : string, double, integer, array, null
-     * 
+     * @static
      * 
      */
     static function processTypeRules($constraintValue): ValidatorInterface
@@ -86,7 +88,7 @@ class Core
      * 
      * 
      * Complex rules are processed here : notBlank
-     * 
+     * @static
      * 
      */
     static function processComplexRules($constraint): ValidatorInterface
@@ -101,7 +103,7 @@ class Core
      * 
      * 
      * Range rules are processed here : integer, double, array, string
-     * 
+     * @static
      * 
      */
     static function processRangeRules($range, $type): ValidatorInterface
