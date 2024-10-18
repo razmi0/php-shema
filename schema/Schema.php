@@ -85,7 +85,6 @@ class Schema
     /**
      * 
      * 
-     * 
      * Stores all the results of the client data validation against the schema after parsing.
      * It is the final output of the parsing and validation process.
      * ( valid and not valid results )
