@@ -55,8 +55,6 @@ use Schema\Validator\ValidatorResult as ValidatorResult;
  */
 
 use Exception as Exception;
-use Schema\Validator\ComplexList;
-use Schema\Validator\ComplexValidator;
 
 /**
  * 
