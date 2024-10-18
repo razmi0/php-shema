@@ -6,9 +6,8 @@
  *  _______________________________________________________________________
  * |                                                                       |
  * |        This class contain the core logic for building the             |
- * |        validation map. Only static methods in it for better           |
- * |        maintenability and scalability. His statics methods            |
- * |        return the rule Object.                                        |
+ * |        validation map. Only protected methods in it for Schema        |
+ * |        class use. It contains all the constraints too.                |
  * |_______________________________________________________________________|
  * 
  * 
@@ -87,17 +86,38 @@ class Core
      */
     private const typeConstraints = ["string", "double", "integer", "array", "null"];
 
-    public static function isComplex(string $constraint): bool
+    /**
+     * 
+     * 
+     * Is the constraint a complex constraint ?
+     * 
+     * 
+     */
+    protected function isComplex(string $constraint): bool
     {
         return in_array($constraint, self::complexConstraints);
     }
 
-    public static function isRange(string $constraint): bool
+    /**
+     * 
+     * 
+     * Is the constraint a range constraint ?
+     * 
+     * 
+     */
+    protected function isRange(string $constraint): bool
     {
         return in_array($constraint, self::rangeConstraints);
     }
 
-    public static function isType(string $constraint): bool
+    /**
+     * 
+     * 
+     * Is the constraint a type constraint ?
+     * 
+     * 
+     */
+    protected function isType(string $constraint): bool
     {
         return in_array($constraint, self::typeConstraints);
     }
@@ -112,7 +132,7 @@ class Core
      * 
      * 
      */
-    public static function getConstraints(): array
+    public function getConstraints(): array
     {
         return [
             "complex" => self::complexConstraints,
@@ -124,10 +144,10 @@ class Core
      * 
      * 
      * Type rules are processed here : string, double, integer, array, null
-     * @static
+     * 
      * 
      */
-    static function processTypeRules(string $constraintValue): ValidatorInterface
+    protected function processTypeRules(string $constraintValue): ValidatorInterface
     {
         switch ($constraintValue) {
             case "string":
@@ -151,10 +171,10 @@ class Core
      * 
      * 
      * Complex rules are processed here : notBlank
-     * @static
+     * 
      * 
      */
-    static function processComplexRules(string $constraint, mixed $constraintValue): ValidatorInterface
+    protected function processComplexRules(string $constraint, mixed $constraintValue): ValidatorInterface
     {
         switch ($constraint) {
             case "notBlank":
@@ -168,10 +188,10 @@ class Core
      * 
      * 
      * Range rules are processed here : integer, double, array, string
-     * @static
+     * 
      * 
      */
-    static function processRangeRules(array $range, string $type): ValidatorInterface
+    protected function processRangeRules(array $range, string $type): ValidatorInterface
     {
         switch ($type) {
             case "integer":

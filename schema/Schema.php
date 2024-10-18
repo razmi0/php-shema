@@ -39,7 +39,7 @@ require_once 'Validator/ValidatorError.php';
 require_once 'Core.php';
 
 use Schema\Template\Template as Template;
-use Schema\Core as Core;
+use Schema\Core as SchemaCore;
 use Schema\Validator\ValidatorError as ValidatorError;
 use Schema\Validator\ValidatorResult as ValidatorResult;
 
@@ -80,7 +80,7 @@ use Schema\Validator\ComplexValidator;
  * 
  * 
  */
-class Schema
+class Schema extends SchemaCore
 {
 
     /**
@@ -297,21 +297,21 @@ class Schema
 
                 // Type rules
                 // --
-                if (Core::isType($constraint)) {
-                    $this->validationMap[$key][] = Core::processTypeRules($constraintValue);
+                if ($this->isType($constraint)) {
+                    $this->validationMap[$key][] = $this->processTypeRules($constraintValue);
                 }
 
 
                 // Complex rules
                 // -- 
-                else if (Core::isComplex($constraint)) {
-                    $this->validationMap[$key][] = Core::processComplexRules($constraint, $constraintValue);
+                else if ($this->isComplex($constraint)) {
+                    $this->validationMap[$key][] = $this->processComplexRules($constraint, $constraintValue);
                 }
 
                 // Range rules
                 // --
-                else if (Core::isRange($constraint)) {
-                    $this->validationMap[$key][] = Core::processRangeRules($constraintValue, $type);
+                else if ($this->isRange($constraint)) {
+                    $this->validationMap[$key][] = $this->processRangeRules($constraintValue, $type);
                 }
             }
         }
