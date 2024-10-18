@@ -1,45 +1,25 @@
 <?php
 
-require_once 'Validator/TypeValidator.php';
-require_once 'Validator/RangeValidator.php';
-require_once 'Validator/ComplexValidator.php';
 require_once 'Validator/ValidatorError.php';
+require_once 'Core.php';
 
-/**
- * 
- * 
- * Grouped use statements ( PHP 7.0 and above )
- * 
- * 
- * 
- */
+use Schema\Template\Template as Template;
+use Schema\Core as Core;
+use Schema\Validator\ValidatorError as ValidatorError;
+use Schema\Validator\ValidatorResult as ValidatorResult;
 
-use Schema\Validator\{
-    StringValidator,
-    DoubleValidator,
-    IntegerValidator,
-    ArrayValidator,
-    isNullValidator,
-    NotBlankValidator,
-    IntegerRangeValidator,
-    ArrayRangeValidator,
-    StringRangeValidator,
-    ValidatorError,
-    ValidatorInterface,
-    ValidatorResult
-};
 
 /**
  * 
  * An exception can be thrown :
  *     - if the schema is not set before processing.
- *     - if the class consumer use the parse method and the client data has at least one error.
- *         (note : the class consumer can use safeParse method to avoid the exception).
+ *     - if the schema is already parsed and the consumer tries to parse it again.
+ *     - if the class consumer use the parse() method and the client data has at least one error.
+ *       (note : the class consumer can use safeParse() method to avoid the exception).
  * 
  */
 
 use Exception as Exception;
-use Schema\Template\Template;
 
 /**
  * 
@@ -55,8 +35,8 @@ use Schema\Template\Template;
  * |          Template is provided as constructor parameter.               |
  * |                                                                       |
  * |       2) PARSING                                                      |
- * |          The parse() or safeParse() method is called with the         |
- * |          client json data as parameter by the consumer                |
+ * |          The parse() or safeParse() method is called by the consumer  |
+ *            with the client json data as parameter                       |
  * |                                                                       |
  * |          2.1) MAPPING RULES                                           |
  * |               The method processShema() is internally called and      |
@@ -66,7 +46,7 @@ use Schema\Template\Template;
  * |          2.2) PROCESSING DATA                                         |
  * |               The client data is decoded and tested against the       |
  * |               rules using validate() method from Validator classes    |
- * |               and results are built (property results).               |
+ * |               and results are built.                                  |
  * |                                                                       |
  * |       3) RETRIEVING RESULTS                                           |
  * |          The method getResults() is called and the results are        |
@@ -82,17 +62,20 @@ use Schema\Template\Template;
  * 
  * Class Schema
  * 
+ * A schema is a set of rules that the client data must follow.
  * 
  * @author Cuesta Thomas
  * @version 1.0
  * 
  * <code>
  * <?php
- * $schema = new Schema(Template::fromArray($arrayOfRules));
- * $results = $schema->safeParse($clientJson)->getResults();
+ * $template = Template::fromArray($arrayOfRules);
+ * $schema = new Schema($template);
+ * $allResults = $schema->safeParse($clientJson)->getResults();
  * ?>
  * </code>
  * 
+ * @todo Decouple json_decode from the class so the input can be any type of php array.
  * 
  * 
  */
@@ -279,97 +262,55 @@ class Schema
         return $this->hasSchema;
     }
 
-
     /**
      * 
      * 
      * Builds the validation map from the schema.
-     * Insert corrensponding rules for each key in the schema.
-     * 
+     * Insert corrensponding rules for each key in the schema calling the Core class.
+     * @todo Extract this method to Core ?
      * 
      */
     private function processSchema(): void
     {
-
+        // Loop through the valid schema provided by the consumer
+        // --
         foreach ($this->schema as $key => $value) {
+
+            // Loop through the rules provided by the consumer
+            // --
             foreach ($value as $constraint => $constraintValue) {
                 $type = $value["type"];
+
+                // Process the rules and store them in the validationMap
+                // --
+
+                // Type rules
+                // --
                 if ($constraint === "type") {
-                    $this->validationMap[$key][] = $this->processTypeRules($constraintValue);
-                } else if ($constraintValue === true) {
-                    $this->validationMap[$key][] = $this->processComplexRules($constraint);
-                } else if ($constraint === "range") {
-                    $this->validationMap[$key][] = $this->processRangeRules($constraintValue, $type);
+                    $this->validationMap[$key][] = Core::processTypeRules($constraintValue);
+                }
+
+
+                // Complex rules
+                // -- 
+                else if ($constraintValue === true) {
+                    $this->validationMap[$key][] = Core::processComplexRules($constraint);
+                }
+
+                // Range rules
+                // --
+                else if ($constraint === "range") {
+                    $this->validationMap[$key][] = Core::processRangeRules($constraintValue, $type);
                 }
             }
         }
+
+
         // Mark the schema as processed
         // --
         $this->isProcessed = true;
     }
 
-    /**
-     * 
-     * 
-     * Type rules are processed here : string, double, integer, array, null
-     * 
-     * 
-     */
-    private function processTypeRules($constraintValue): ValidatorInterface
-    {
-        switch ($constraintValue) {
-            case "string":
-                return new StringValidator();
-
-            case "double":
-                return new DoubleValidator();
-
-            case "integer":
-                return new IntegerValidator();
-
-            case "array":
-                return new ArrayValidator();
-
-            case "null":
-                return new isNullValidator();
-        }
-    }
-
-    /**
-     * 
-     * 
-     * Complex rules are processed here : notBlank
-     * 
-     * 
-     */
-    private function processComplexRules($constraint): ValidatorInterface
-    {
-        switch ($constraint) {
-            case "notBlank":
-                return new NotBlankValidator();
-        }
-    }
-
-    /**
-     * 
-     * 
-     * Range rules are processed here : integer, double, array, string
-     * 
-     * 
-     */
-    private function processRangeRules($range, $type): ValidatorInterface
-    {
-        switch ($type) {
-            case "integer":
-                return new IntegerRangeValidator($range);
-            case "double":
-                return new IntegerRangeValidator($range);
-            case "array":
-                return new ArrayRangeValidator($range);
-            case "string":
-                return new StringRangeValidator($range);
-        }
-    }
 
     /**
      * 
