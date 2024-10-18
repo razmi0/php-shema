@@ -28,20 +28,9 @@ $trustedSchema = Template::fromArray($untrustedSchema);
 
 ```
 
-If no error has been thrown, the schema is valid. Now we can validate a json data :
+If no error has been thrown, the schema is valid. Let's declare and initialize it :
 
 ```php
-
-$data = [
-    "id" => null,
-    'name' => "Product 1",
-    'price' => 10,
-    'description' => "This is a product",
-    "variants" => [
-        "variant1",
-        "variant2"
-    ]
-];
 
 $schema = new Schema($template);
 
@@ -50,6 +39,17 @@ $schema = new Schema($template);
 Then we can parse the json data and get all the results :
 
 ```php
+
+$client_json = json_encode([
+    "id" => null,
+    'name' => "Product 1",
+    'price' => 10,
+    'description' => "This is a product",
+    "variants" => [
+        "variant1",
+        "variant2"
+    ]
+]);
 
 $results = $schema->safeParse($client_json)->getResults();
 
