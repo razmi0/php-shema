@@ -4,7 +4,7 @@ A schema is a representation of a model. It contains appropriate rules to test a
 
 ## Usage
 
-To use a shema we first need to build a Template Object. The Template Object will valid the shema so the shema you provided will be valid :
+To use a shema we first need to build a Template Object. The Template Object will valid the shema :
 
 ```php
 
@@ -20,7 +20,7 @@ $untrustedSchema = [
 
 ```
 
-Now we can create a Template Object :
+Now we can test the schema :
 
 ```php
 
@@ -28,11 +28,11 @@ $trustedSchema = Template::fromArray($untrustedSchema);
 
 ```
 
-If no error has been thrown, the schema is valid. Let's declare and initialize it :
+If no error has been thrown, the schema is well formed. Let's declare and initialize it :
 
 ```php
 
-$schema = new Schema($template);
+$schema = new Schema($trustedSchema);
 
 ```
 
@@ -126,11 +126,26 @@ or in json format :
 
 Do whatever you want with the results.
 
-### Exemple
+## Constraints available
+
+- Type constraints :
+  - string
+  - int
+  - float
+  - bool
+  - array
+  - null
+- Range constraints :
+  - range[min, max]
+- Complex constraints :
+  - regex
+  - notBlank
+
+## Exemple
 
 Go to [exemple](http://localhost/shema_test/exemple/index.php) to see the exemple.
 
-#### Todo
+## Todo
 
 - [ ] Decouple json_decode from the schema so the consumer can test an array of data
 - [ ] Add optional values
