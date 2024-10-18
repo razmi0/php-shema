@@ -32,7 +32,8 @@ use Schema\Validator\{
     IntegerRangeValidator,
     ArrayRangeValidator,
     StringRangeValidator,
-    ValidatorInterface
+    RegexValidator,
+    ValidatorInterface,
 };
 
 /**
@@ -60,11 +61,73 @@ class Core
     /**
      * 
      * 
+     * All the complex constraints.
+     * 
+     * 
+     * 
+     */
+    private const complexConstraints = ["regex", "not_blank"];
+    /**
+     * 
+     * 
+     * All the range constraints.
+     * 
+     * 
+     * 
+     */
+    private const rangeConstraints = ["range"];
+
+    /**
+     * 
+     * 
+     * All the type constraints.
+     * 
+     * 
+     * 
+     */
+    private const typeConstraints = ["string", "double", "integer", "array", "null"];
+
+    public static function isComplex(string $constraint): bool
+    {
+        return in_array($constraint, self::complexConstraints);
+    }
+
+    public static function isRange(string $constraint): bool
+    {
+        return in_array($constraint, self::rangeConstraints);
+    }
+
+    public static function isType(string $constraint): bool
+    {
+        return in_array($constraint, self::typeConstraints);
+    }
+
+    /**
+     * 
+     * 
+     * 
+     * 
+     * Get all the constraints as an array for information.
+     * 
+     * 
+     * 
+     */
+    public static function getConstraints(): array
+    {
+        return [
+            "complex" => self::complexConstraints,
+            "range" => self::rangeConstraints,
+            "type" => self::typeConstraints
+        ];
+    }
+    /**
+     * 
+     * 
      * Type rules are processed here : string, double, integer, array, null
      * @static
      * 
      */
-    static function processTypeRules($constraintValue): ValidatorInterface
+    static function processTypeRules(string $constraintValue): ValidatorInterface
     {
         switch ($constraintValue) {
             case "string":
@@ -91,11 +154,13 @@ class Core
      * @static
      * 
      */
-    static function processComplexRules($constraint): ValidatorInterface
+    static function processComplexRules(string $constraint, mixed $constraintValue): ValidatorInterface
     {
         switch ($constraint) {
             case "notBlank":
                 return new NotBlankValidator();
+            case "regex":
+                return new RegexValidator($constraintValue);
         }
     }
 
@@ -106,7 +171,7 @@ class Core
      * @static
      * 
      */
-    static function processRangeRules($range, $type): ValidatorInterface
+    static function processRangeRules(array $range, string $type): ValidatorInterface
     {
         switch ($type) {
             case "integer":

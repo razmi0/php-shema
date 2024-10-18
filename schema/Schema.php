@@ -55,7 +55,8 @@ use Schema\Validator\ValidatorResult as ValidatorResult;
  */
 
 use Exception as Exception;
-
+use Schema\Validator\ComplexList;
+use Schema\Validator\ComplexValidator;
 
 /**
  * 
@@ -296,20 +297,20 @@ class Schema
 
                 // Type rules
                 // --
-                if ($constraint === "type") {
+                if (Core::isType($constraint)) {
                     $this->validationMap[$key][] = Core::processTypeRules($constraintValue);
                 }
 
 
                 // Complex rules
                 // -- 
-                else if ($constraintValue === true) {
-                    $this->validationMap[$key][] = Core::processComplexRules($constraint);
+                else if (Core::isComplex($constraint)) {
+                    $this->validationMap[$key][] = Core::processComplexRules($constraint, $constraintValue);
                 }
 
                 // Range rules
                 // --
-                else if ($constraint === "range") {
+                else if (Core::isRange($constraint)) {
                     $this->validationMap[$key][] = Core::processRangeRules($constraintValue, $type);
                 }
             }

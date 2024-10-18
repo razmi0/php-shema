@@ -7,6 +7,8 @@ use Schema\Validator\ValidatorResult;
 
 
 
+
+
 /**
  * 
  * Class NotBlankValidator
@@ -36,5 +38,24 @@ class NotBlankValidator implements ValidatorInterface
         return !isset($value) || $value === "" || $value === false || (is_array($value) && count($value) === 0)
             ? new ValidatorResult("not_blank", "not_blank", "blank", [$key], "Value cannot be blank")
             : new ValidatorResult("valid", "not_blank", "not_blank", [$key], "Value is not blank");
+    }
+}
+
+
+
+class RegexValidator implements ValidatorInterface
+{
+    private string $pattern;
+
+    public function __construct(string $pattern)
+    {
+        $this->pattern = $pattern;
+    }
+
+    public function validate(mixed $value, string $key): ValidatorResult
+    {
+        return !preg_match($this->pattern, $value)
+            ? new ValidatorResult("invalid_pattern", $this->pattern, $value, [$key], "Value does not match pattern")
+            : new ValidatorResult("valid", $this->pattern, $value, [$key], "Value matches pattern");
     }
 }
