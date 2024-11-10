@@ -1,152 +1,156 @@
-# Schema
+# Validator
 
-A schema is a representation of a model. It contains appropriate rules to test a json data and to validate it. It can be used to validate json before saving it to database.
+This document describes the Validator class and its use for validating data against a defined schema.
 
-## Usage
+## Introduction
 
-To use a shema we first need to build a Template Object. The Template Object will valid the shema :
+The Validator class offers a robust mechanism for validating data based on a set of rules and constraints defined in a schema. It allows verifying various aspects of the data, including:
+
+- Presence of required fields
+- Nullability of fields
+- Data types
+- Numeric ranges
+- String and array lengths
+- Regular expression matching
+- Limitation of the number of keys
+
+### Supported data types
+
+The validator supports the validation of the following data types:
+
+- string
+- integer
+- double
+- boolean
+- Typed arrays: string[], integer[], double[], boolean[], array[], object[], any[]
+- object
+- any (corresponds to any data type)
+
+### Using the validator
+
+1. Initialization
+   The use of the validator begins with its initialization with a schema. The schema, represented as an associative array, defines the validation rules for each field of the data to be validated.
+
+   Example schema:
 
 ```php
+$schema = [
+   "name" => [
+      "type" => "string",
+      "required" => true, // Name is required
+      "length" => [0, 20] // Minimum and maximum length of the name
+   ],
 
-use Schema\Template as Template;
+   "age" => [
+      "type" => "integer",
+      "required" => false, // Age is not required
+      "range" => [13, 120], // Valid range of age values
+      "nullable" => true // Age can be null
+   ],
 
-$untrustedSchema = [
-    "id" => ["type" => 'null'],
-    'name' => ["type" => 'string'],
-    'price' => ["type" => 'int', "range" => [0, 100]],
-    'description' => ["type" => 'string', "range" => [0, 100], "regex" => '/^[a-zA-Z0-9 ]+$/'],
-    "variants" => [ "type" => 'array', "range" => [1, 5]]
+   "email" => [
+      "type" => "string",
+      "required" => true,
+      "regex" => "/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/" // Regular expression to validate email format
+   ]
+
+    "numbers" => [
+        "type" => "integer[]",
+        "length" => [0, 10] // Maximum length of the array
+    ],
 ];
 
+$validator = new Validator($schema);
+
 ```
 
-Now we can test the schema :
+2. Data validation
+
+   After initialization, the `safeParse()` method is used to validate a set of data against the schema. This method takes an associative array of data as input and returns the Validator object itself, allowing method chaining.
+   Example usage:
 
 ```php
+$data = [
+   "name" => "John Doe",
+   "age" => 30,
+   "email" => "john.doe@example.com"
+   "numbers" => [1, 2, 3]
+];
 
-$trustedSchema = Template::fromArray($untrustedSchema);
-
+$validator->safeParse($data);
 ```
 
-If no error has been thrown, the schema is well formed. Let's declare and initialize it :
+3. Accessing validation results
+   The Validator object offers methods to access the validation results:
+
+- `getResults()`: Returns an array containing all validation results, including errors and successes.
+- `getErrors()`: Returns an array containing only validation errors.
+- `getValids()`: Returns an array containing valid fields.
+- `getIsValid()`: Returns a boolean indicating whether the overall validation was successful (i.e., no errors were encountered).
+
+Example usage:
 
 ```php
-
-$schema = new Schema($trustedSchema);
-
+if ($validator->getIsValid()) {
+   // The data is valid
+} else {
+   // The data is invalid
+   $errors = $validator->getErrors();
+   // Handle errors...
+}
 ```
 
-Then we can parse the json data and get all the results :
+### Advanced features
+
+Key limiter
+
+The validator allows limiting the number of keys allowed in the validated data. By default, the number of keys is limited to the number of keys defined in the schema. This limitation can be disabled using the `setKeyLimiter()` method with the argument `false`.
+
+Example usage:
 
 ```php
-
-$client_json = json_encode([
-    "id" => null,
-    'name' => "Product 1",
-    'price' => 10,
-    'description' => "This is a product",
-    "variants" => [
-        "variant1",
-        "variant2"
-    ]
-]);
-
-$results = $schema->safeParse($client_json)->getResults();
-
+// Disable the key limiter
+$validator->setKeyLimiter(false);
 ```
 
-If we want to grab more information about errors / success in the client data, we use can dedicated getters :
+### ValidatorResult
+
+The ValidatorResult class is used internally by the validator to represent the result of an individual validation. Each ValidatorResult object contains the following information:
+
+- `code`: Validation result code.
+- `expected`: Expected value.
+- `received`: Received value.
+- `path`: Path to the validated value (as an array, e.g., `["field1", 0]` for the first element of an array named "field1").
+- `message`: Message describing the validation result.
+
+Exemple of an invalid result:
 
 ```php
-
-$success = $schema->getSuccessResults();
-$errors = $schema->getErrorResults();
-
-$isParsed = $schema->getIsParsed();
-$hasError = $schema->getHasError();
-
+array (
+  0 =>
+  array (
+    'code' => 'invalid_type',
+    'expected' => 'string',
+    'received' => 'integer',
+    'path' =>
+    array (
+      0 => 'name',
+    ),
+    'message' => 'Invalid type',
+  ),
+)
 ```
 
-> **Important note** : The method _safeParse_ and _parse_ share a similar implementation **BUT** _parse_ will throw an exception if the json data is not valid. _safeParse_ will not throw an exception but will set the error flag to true.
-
-The results are stored in a PHP array, that look like this :
-
-```php
-
-Array
-(
-    [0] => Array
-        (
-            [code] => valid
-            [expected] => between 0 and 65
-            [received] => 9
-            [path] => Array
-                (
-                    [0] => name
-                )
-
-            [message] => Value is within range
-        )
-
-    [1] => Array
-        (
-            [code] => invalid_pattern
-            [expected] => /^[a-zA-Z]+$/
-            [received] => Product 1
-            [path] => Array
-                (
-                    [0] => name
-                )
-
-            [message] => Value does not match pattern
-        )
-
-```
-
-or in json format :
+A very good use case is to send a json response to the client with the errors.
 
 ```json
 [
   {
-    "code": "valid",
-    "expected": "between 0 and 65",
-    "received": 9,
+    "code": "invalid_type",
+    "expected": "string",
+    "received": "integer",
     "path": ["name"],
-    "message": "Value is within range"
-  },
-  {
-    "code": "invalid_pattern",
-    "expected": "/^[a-zA-Z]+$/",
-    "received": "Product 1",
-    "path": ["name"],
-    "message": "Value does not match pattern"
+    "message": "Invalid type"
   }
 ]
 ```
-
-Do whatever you want with the results.
-
-## Constraints available
-
-- Type constraints :
-  - string
-  - int
-  - float
-  - bool
-  - array
-  - null
-- Range constraints :
-  - range[min, max]
-- Complex constraints :
-  - regex
-  - notBlank
-
-## Exemple
-
-Go to [exemple](http://localhost/shema_test/exemple/index.php) to see the exemple.
-
-## Todo
-
-- [ ] Decouple json_decode from the schema so the consumer can test an array of data
-- [ ] Add optional values
-- [ ] Add multiple types
