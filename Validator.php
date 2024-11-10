@@ -1,8 +1,10 @@
 <?php
 
+namespace Validators;
+
 require_once "ValidatorResult.php";
 
-use Schema\Validators\ValidatorResult;
+use Validators\ValidatorResult;
 
 
 
@@ -503,22 +505,3 @@ class Validator
         return $this->isValid;
     }
 }
-
-
-
-$schema = new Validator(
-    [
-        "name" => [
-            "type" => "string",
-        ]
-    ]
-);
-
-$data = [
-    "name" => 12,
-];
-
-$validator = $schema->safeParse($data);
-
-var_export(json_encode($validator->getErrors(), JSON_PRETTY_PRINT));
-var_export(($validator->getErrors()));
